@@ -18,7 +18,7 @@ from django_authopenid.views import signin
 
 from search import epubindexer
 from library.epub import InvalidEpubException
-from library.models import EpubArchive, HTMLFile, StylesheetFile, ImageFile, SystemInfo, get_file_by_item, order_fields, DRMEpubException, UnknownContentException
+from library.models import EpubArchive, HTMLFile, StylesheetFile, ImageFile, SystemInfo, get_file_by_item, order_fields, DRMEpubException, UnknownContentException, UserArchive
 from library.forms import EpubValidateForm, ProfileForm
 from library.epub import constants as epub_constants
 from library.google_books.search import Request
@@ -72,7 +72,7 @@ def logged_in_home(request, page_number, order, dir):
         page_number = settings.DEFAULT_START_PAGE
     user = request.user
     form = EpubValidateForm()
-    paginator = Paginator(EpubArchive.objects.filter(owner=user).order_by(order_computed), settings.DEFAULT_NUM_RESULTS)
+    paginator = Paginator(EpubArchive.objects.filter(user_archive__user=user).order_by(order_computed), settings.DEFAULT_NUM_RESULTS)
     try:
         page = paginator.page(page_number)
     except EmptyPage:
@@ -155,11 +155,13 @@ def view(request, title, key, first=False, resume=False):
     document = _get_document(request, title, key)
 
     uprofile = request.user.get_profile()
+    
+    last_chapter_read = document.get_last_chapter_read(request.user)
 
-    if resume and document.last_chapter_read is not None:
-        chapter = document.last_chapter_read
-    elif not first and uprofile.open_to_last_chapter and document.last_chapter_read is not None:
-        chapter = document.last_chapter_read
+    if resume and last_chapter_read is not None:
+        chapter = last_chapter_read
+    elif not first and uprofile.open_to_last_chapter and last_chapter_read:
+        chapter = last_chapter_read
     else:
         toc = document.get_toc()
         first = toc.first_item()
@@ -213,7 +215,7 @@ def profile_delete(request):
     request.user.get_profile().delete()
 
     # Delete all their books (this is likely to time out for large numbers of books)
-    documents = EpubArchive.objects.filter(owner=request.user)
+    documents = EpubArchive.objects.filter(user_archive__user=request.user)
 
     for d in documents:
         _delete_document(request, d)
@@ -342,10 +344,12 @@ def upload(request):
                 data.write(c)
             document_name = form.cleaned_data['epub'].name
             log.debug("Uploading document name: %s" % document_name)
-            document = EpubArchive(name=document_name)
-            document.owner = request.user
+            d            document.owner = request.user
             document.save()
             document.set_content(data.getvalue())
+
+            truser_archive.create(archive=document,
+                                             user=request.usergetvalue())
 
             try:
                 document.explode()
@@ -483,9 +487,7 @@ def _get_document(request, title, key, override_owner=False, nonce=None):
 
     document = get_object_or_404(EpubArchive, pk=key)
     if nonce and document.is_nonce_valid(nonce):
-        return document
-
-    if not document.is_public and not override_owner and document.owner != user and not user.is_superuser:
+        return docunot document.is_owner(user) and is_public and not override_owner and document.owner != user and not user.is_superuser:
         log.error('User %s tried to access document %s, which they do not own' % (user, title))
         raise Http404
 
@@ -503,7 +505,4 @@ def _get_google_books_info(document, request):
     if 'REMOTE_ADDR' in request.META:
         remote_addr = request.META['REMOTE_ADDR']
     else:
-        remote_addr = None
-    return Request(query, remote_addr).get()
-
-
+        rem
