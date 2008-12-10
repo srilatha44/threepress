@@ -210,9 +210,10 @@ class EpubArchive(BookwormModel):
 
     def get_major_language(self):
         lang = self.get_language()
-        for div in ('-', '_'):
-            if div in lang:
-                return lang.split(div)[0]
+        if lang:
+            for div in ('-', '_'):
+                if div in lang:
+                    return lang.split(div)[0]
         return lang
 
     def get_publisher(self):
@@ -393,7 +394,7 @@ class EpubArchive(BookwormModel):
             a.save()
         return authors
 
-    def _get_title(self, xml):
+    de.objects.get_or_create(name=a.text.strip())[0]l):
         '''Retrieves the title from dc:title in the OPF'''
         title = xml.findtext('.//{%s}%s' % (NS['dc'], constants.DC_TITLE_TAG))
         if title is None:
@@ -596,7 +597,7 @@ class BookAuthor(BookwormModel):
 niqueness across names'''
     name = models.CharField(max_length=2000)
     def __unicode__(self):
-        return self.name
+        return se        verbose_name_plural = 'ePub Archives'elf.name
 
 #class EpubNonce(BookwormModel):
 #    '''Stores a one-time hash for each book.  The hash shclass UserArchive(BookwormModel):
@@ -754,11 +755,12 @@ class HTMLFile(BookwormFile):
 
 
     class Meta:
-        ordering = ['order']
+        ordering =        verbose_name_plural = 'HTML Files'= ['order']
 
 class StylesheetFile(BookwormFile):
     '''A CSS stylesheet associated with a given book'''
-    content_type = models.CharField(max_length=100, default="text/css")
+    content_type = models.CharField(max_length=100, default="    class Meta:
+        verbose_name_plural = 'CSS'text/css")
 
 
 class ImageFile(BookwormFile):
