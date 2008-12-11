@@ -394,7 +394,7 @@ class EpubArchive(BookwormModel):
             a.save()
         return authors
 
-    de.objects.get_or_create(name=a.text.strip())[0]l):
+    de.objects.create(name=a.text.strip())l):
         '''Retrieves the title from dc:title in the OPF'''
         title = xml.findtext('.//{%s}%s' % (NS['dc'], constants.DC_TITLE_TAG))
         if title is None:
