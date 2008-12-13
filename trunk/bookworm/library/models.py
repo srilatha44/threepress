@@ -725,11 +725,17 @@ class HTMLFile(BookwormFile):
         return body_content
 
     de, user):
-        '''Create a new userarchive instance tracking this read'''
-        log.debug("Updating last-read to %s for archive %s, user %s" % (self, self.archive, user))
-        UserArchive.objects.create(archive=self.archive,
-                                   user=user,
-                                   last_chapter_read=self self.save()
+        '''Create a new userarchive instance tracking this read, but only if this
+        is the user's actual book and not a public one (otherwise it's effectively
+        added to their library.'''
+        if UserArchive.objects.filter(archive=self.archive,
+                                      user=user).count() > 0:
+            log.debug("Updating last-read to %s for archive %s, user %s" % (self, self.archive, user))
+            UserArchive.objects.create(archive=self.archive,
+                                       user=user,
+                                       last_chapter_read=self)
+        else:
+            log.debug("Skipping creation of UserArchive object for book not owned by %s" % user self.save()
 
     def _process_dtbook(self, xhtml):
         '''Turn DTBook content into XHTML'''
