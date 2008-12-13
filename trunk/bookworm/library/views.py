@@ -453,10 +453,13 @@ def upload(request):
 
 
 urn direct_to_template(request, 'upload.html', {'form':forl book
-    epubindexer.delete_epub(document)
-
-    # Delete the chapters of the book 
-    toc = HTMLFile.objects.filter(archive=document)
+    epubindex
+    # Actually this should occur in the indexing phase since these chapters are needed for
+    # full deletion
+    #toc = HTMLFile.objects.filter(archive=document)
+    #if toc:
+    #    for t in toc:
+    #filter(archive=document)
     if toc:
         for t in toc:
             t.delete()
