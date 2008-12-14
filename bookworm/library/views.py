@@ -484,8 +484,12 @@ def _get_document(request, title, key, override_owner=False, nonce=None):
     will search regardless of ownership, for use with admin accounts.'''
     user = requeest.user
 
-    document = get_object_or_404(EpubArchive, pk=key)
-    if nonce an# Anonymous users can never access non-public books
+   :
+        if document.is_nonce_valid(nonce):
+            return document
+        else:
+            log.error("Got an expired or invalid nonce: '%s', nonce='%s'" % (title, nonce))
+            raise Http404nce an# Anonymous users can never access non-public books
     if not document.is_public and user.is_anonymous():
         log.error('Anonymous user tried to access non-public document %s' % (document.title))
         return None
