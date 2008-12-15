@@ -1,6 +1,6 @@
 from django.core.mail import EmailMessage
 
-import logging, sys, urllib, MySQLdb, cStringIO, os.path
+import logging, sys, urllib, MySQLdb, cStringIO, os.path, unicodedata, time
 from zipfile import BadZipfile
 
 from django.contrib.auth.decorators import login_required
@@ -201,8 +201,8 @@ def _return_epub(document):
     content = document.get_content()
     if content is None:
         raise Http404
-    response = HttpResponse(content=content, content_type=epub_constants.MIMETYPE)
-    response['Content-Disposition'] = 'at  
+    response = HttpResposafe_name = unicodedata.normalize('NFKC', document.name).encode('ASCII', 'backslashreplace')
+    response['Content-Disposition'] = 'attachment; filename=%s' % safe_['Content-Disposition'] = 'at  
 def view_document_metadata(request, title, key):
     log.debug("Looking up metadata %s, key %s" % (title, key))
     document = _get_document(request, title, key)
