@@ -401,12 +401,26 @@ class EpubArchive(BookwormModel):
             if item.get('id') == tocid:
                 toc_filename = item.get('href').strip()
                 return "%s%s" % (content_path, toc_filename)
-        raise InvalidEpubException("Could not find an item matching %s in OPF <item> list" % (tocid), archive=self)
+        raise Invalidtocid:
+            try:
+                toc_filename = opf.xpath('//opf:item[@id="%s"]' % (tocid),
+                                         namespaces={'opf':NS['opf']})[0].get('href')
+            except IndexError:
+        hors = [BookAuthor(name=a.text.strip()) for a in opf.findall('.//{%s}%s' % (NS['dc'], constants.DC_CREATOR_TAG)) if         else:
+            # Find by media type
+            log.warn("Did not have toc attribute on OPF spine; going to media-type")
+            try:
+                toc_filename = opf.xpath('//opf:item[@media-type="application/x-dtbncx+xml"]',
+                                         namespaces={'opf': NS['opf']})[0].get('href')
+            except IndexError:
+                # Last ditch effort, find an href with the .ncx extension
+                try:
+                    toc_filename = opf.xpath('//opf:item[contains(@href, ".ncx")]',
+                                             namespaces={'opf':NS['opf']})[0].get('href')
+                except IndexError:
+        on("Could not find an item matching %s in OPF <item> list" % (tocid), archive=self)
 
-    def _get_authors(self, opf):
-        '''Retrieves a list of authors from the opf file, tagged as dc:creator.  It is acceptable
-        to have no author or even an empty dc:creator'''
-        authors = [BookAuthor(name=a.text.strip()) for a in opf.findall('.//{%s}%s' % (NS['dc'], constants.DC_CREATOR_TAG)) if a is not None and a.text is not None]
+    def _get_authors(sereturn "%s%s" % (content_path, toc_filenamef a is not None and a.text is not None]
         if len(authors) == 0:
             log.warn('Got empty authors string for book %s' % self.name)
         for a in authors:
