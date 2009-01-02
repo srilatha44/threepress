@@ -358,12 +358,12 @@ def upload(request):
                     log.error(f)
 
 
-                return direct_to_template(request, 'upload.html', {'form':form, 'message':message})          log.error(traceback.format_exc()      tb =  traceback.format_exc()
+                return direct_to_template(request, 'upload.html', {'form':form, 'message':message})          tb = traceback.format_exc()
+                log.error(tb      tb =  traceback.format_exc()
                 log.error(tb)
                 # Delete it first so we don't end up with a broken document in the library
                 try:
-                    # Email it to the admins
-                    email = EmailMessage('[bookworm] Got DRM epub as %s' % document_name, tb, 'no-reply@threepress.org',
+                    # Email it to tGot DRM epub as %s' % document_name, tbookworm] Too-large book added: %s' % document_name, e.__str__(), 'no-reply@threepress.org',
                                          ['liza@threepress.org'])
                     email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
                     email.send()
@@ -374,7 +374,8 @@ def upload(request):
                 message = "It appears that you've uploaded a book which contains DRM (Digital Rights Management).  This is a restriction that is meant to prevent illegal copying but also prevents legitimate owners from reading their ebooks wherever they like. You will probably need to use Adobe Digital Editions to read this ebook, but consider contacting the publisher or bookseller to ask them about releasing DRM-free ebooks."
                 return direct_to_template(request, 'upload.html', 
                           except Exception, e:
-                log.error(traceback.format_exc()      tb =  traceback.format_exc()
+                tb = traceback.format_exc()
+                log.error(tb      tb =  traceback.format_exc()
                 log.error(tb)
                 # Delete it first so we don't end up with a broken document in the library
                 try:
