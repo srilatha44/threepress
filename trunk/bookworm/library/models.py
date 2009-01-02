@@ -488,11 +488,12 @@ class EpubArchive(BookwormModel):
                 parsed_content = self._parse_stylesheet(content)
                 stylesheets.append({'idref':item.get('id'),
                                     'filename':item.get('href'),
-                                    'file':unicode(parsed_content, ENC)})
-
-
-                self.has_stylesheets = True
-        self._create_stylesheets(stylesheets)
+                                    'file':unicode(parsed_cotry:
+             else:
+                    # This is a binary file, like a jpeg
+                    data['except KeyError:
+                    log.warn("Could not find content %s " % item.get('href'))
+                    continue   self._create_stylesheets(stylesheets)
 
     def _parse_stylesheet(self, stylesheet):
         css = cssutils.parseString(stylesheet)
@@ -1008,7 +1009,7 @@ class ImageBlob(BinaryBlob):
 class InvalidBinaryException(InvalidEpubException):
     pass
 
-class DRMEpubException(InvalidEpubException):
+class DRMEpuInvalidEpubException):
     pass
 
 class UnknownContentException(InvalidEpubException):
