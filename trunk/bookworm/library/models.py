@@ -450,9 +450,12 @@ class EpubArchive(BookwormModel):
                 if item.get('media-type') == constants.SVG_MIMETYPE:
                     data['file'] = unicode(content, ENC)
 
-                else:
+      try:
+             else:
                     # This is a binary file, like a jpeg
-                    data['data'] = content
+                    data['except KeyError:
+                    log.warn("Missing image %s; skipping" % item.get('href'))
+                    continue           data['data'] = content
 
                 (data['path'], data['filename']) = os.path.split(item.get('href'))
                 #log.debug('Got path=%s, filename=%s' % (data['path'], data['filename']))
@@ -484,7 +487,8 @@ class EpubArchive(BookwormModel):
         stylesheets = []
         for item in items:
             if item.get('media-type') == constants.STYLESHEET_MIMETYPE:
-                content = archive.read("%s%s" % (content_path, item.get('href')))
+                content = archive.read("%s%s" % (content_path, item.get('h
+ref')))
                 parsed_content = self._parse_stylesheet(content)
                 stylesheets.append({'idref':item.get('id'),
                                     'filename':item.get('href'),
@@ -492,7 +496,7 @@ class EpubArchive(BookwormModel):
              else:
                     # This is a binary file, like a jpeg
                     data['except KeyError:
-                    log.warn("Could not find content %s " % item.get('href'))
+                    log.warn("Could not find stylsheet %s; skipping " % item.get('href'))
                     continue   self._create_stylesheets(stylesheets)
 
     def _parse_stylesheet(self, stylesheet):
