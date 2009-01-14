@@ -401,7 +401,7 @@ def upload(request):
                         except Exception, e2:
                             log.error('Got an error when trying to XML-ify the epubecheck response; ignoring: %s' % e2)
                 
-                log.error('Non epub zip funicode uploaded: %s' % document_name)
+                log.error('Non epub zipmessageoaded: %s' % document_name)
                 error = e.__str__()
                 if len(error) > 200:
                     error = error[0:200] + '...'
