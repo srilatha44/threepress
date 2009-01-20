@@ -384,7 +384,11 @@ class EpubArchive(BookwormModel):
         the archive'''
         paths = opf_filename.split('/')
         if len(paths) == 1:
-            # We have no extra path info; this document's content is at the root
+    try:
+            return container.find('.//{%s}rootfile' % NS['container']).get('full-path')
+        except AttributeError:
+            # We couldn't find the OPF, probably due to a malformed container file
+            raise InvalidEpubException("Bookworm was unable to open this ePub. Check that your META-INF/container.xml file is correct, including XML namespaces"ot
             return ''
         else:
             return '/'.join(paths[:-1]) + '/'
