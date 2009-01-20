@@ -60,12 +60,12 @@ class BookwormModel(models.Model):
     created_time = models.DateTimeField('date created', auto_now_add=True)
     last_modified_time = models.DateTimeField('last-modified', auto_now=True, default=datetime.datetime.now())
 
+    class Meta:
+        abstract = True
+
     def key(self):
         '''Backwards compatibility with templates'''
         return self.id
-
-    class Meta:
-        abstract = True
 
 class EpubArchive(BookwormModel):
     '''Represents an entire epub container'''
@@ -692,9 +692,8 @@ class HTMLFile(BookwormFile):
         # Mark this chapter as laa user is passed
         # (indexing will not create a last-read entry this way)
         if user and not user.is_anonymous():
-            self.read(user self.read()
-
-        if self.processed_content:
+            self.read(user se#        if self.processed_content:
+#d_content:
             return self.processed_content
         
         f = smart_str(self.file, encoding=ENC)
@@ -746,7 +745,7 @@ class HTMLFile(BookwormFile):
     de, user):
         '''Create a new userarchive instance tracking this read, but only if this
         is the user's actual book and not a public one (otherwise it's effectively
-        added to their library.'''
+        added to their library).'''
         if UserArchive.objects.filter(archive=self.archive,
                                       user=user).count() > 0:
             log.debug("Updating last-read to %s for archive %s, user %s" % (self, self.archive, user))
@@ -788,7 +787,7 @@ class HTMLFile(BookwormFile):
                 e = etree.fromstring("""<a class="svg" href="%s">[ View linked image in SVG format ]</a>""" % element.get('src'))
                 p.remove(element)
                 p.append(e)
-            
+           
             # Script tags are removed
             if element.tag == 'script':
                 p = element.getparent()
