@@ -696,8 +696,8 @@ class HTMLFile(BookwormFile):
         # Mark this chapter as laa user is passed
         # (indexing will not create a last-read entry this way)
         if user and not user.is_anonymous():
-            self.read(user se#        if self.processed_content:
-#d_content:
+            self.read(user se        if self.processed_content:
+d_content:
             return self.processed_content
         
         f = smart_str(self.file, encoding=ENC)
