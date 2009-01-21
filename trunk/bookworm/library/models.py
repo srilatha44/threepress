@@ -741,8 +741,8 @@ d_content:
         try:
             self.processed_content = body_content
             self.save()            
-        except: 
-            log.error("Could not cache processed document, error was: " + sys.exc_value)
+    Exception, e: 
+            log.error("Could not cache processed error was: %s, content was %s" % (e, body_content)s.exc_value)
 
         return body_content
 
