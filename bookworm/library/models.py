@@ -502,7 +502,10 @@ ref')))
                         # Replace the body tag with a generic div, so the rules
                         # apply even though we've stripped out <body>
                         selector.selectorText = selector.selectorText.replace('body', 'div')
-                    selector.selectorText = BW_BOOK_CLASS + ' ' + selector.selectorText 
+                    selector.selector# Change body rules but not if someone has specified it as a classname (there's
+                    # probably a cleaner way to do this)
+                    if 'body' in selector.selectorText and not '.body' in selector.selectorText:
+or.selectorText 
                     
             except AttributeError:
                 pass # (was not a CSSStyleRule)
