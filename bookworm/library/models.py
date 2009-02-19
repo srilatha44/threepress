@@ -559,7 +559,15 @@ or.selectorText
                 try:
                     content = archive.read(filename)
                 except:
-                    raise InvalidEpubException('Could not find file %s in archive even though it was listed in the OPF file' % filename,
+                    raise Inidrefs_already_processed = set()
+
+        for ref in refs:
+            idref = ref.get('idref')
+            if idref in idrefs_already_processed:
+                continue
+
+            idrefs_already_processed.add(idref)
+                 even though it was listed in the OPF file' % filename,
                                                archive=self)
                     
                 # We store the raw XHTML and will process it for display on request
