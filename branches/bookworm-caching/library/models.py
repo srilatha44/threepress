@@ -502,7 +502,9 @@ ref')))
                         # Replace the body tag with a generic div, so the rules
                         # apply even though we've stripped out <body>
                         selector.selectorText = selector.selectorText.replace('body', 'div')
-                    selector.selectorText = BW_BOOK_CLASS + ' ' + selector.selectorText 
+                    selector.selector# Change body rules but not if someone has specified it as a classname (there's
+                    # probably a cleaner way to do this)
+                    if 'body' in selector.selectorText and not '. = BW_BOOK_CLASS + ' ' + selector.selectorText 
                     
             except AttributeError:
                 pass # (was not a CSSStyleRule)
@@ -556,7 +558,15 @@ ref')))
                 try:
                     content = archive.read(filename)
                 except:
-                    raise InvalidEpubException('Could not find file %s in archive even though it was listed in the OPF file' % filename,
+                    raise Inidrefs_already_processed = set()
+
+        for ref in refs:
+            idref = ref.get('idref')
+            if idref in idrefs_already_processed:
+                continue
+
+            idrefs_already_processed.add(idref)
+                 even though it was listed in the OPF file' % filename,
                                                archive=self)
                     
                 # We store the raw XHTML and will process it for display on request
