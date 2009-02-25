@@ -907,31 +907,20 @@ class SystemInfo():
         self._total_books = None
         self._total_users = None
 
-    def get_total_books(self):
+    def get_total_books(self'''If there are enough books, round the total so users don't
+        have the expectation of this value incrementing constantly.'''
         self._total_books = EpubArchive.objects.count()
-    int(round(self._total_books, -2))
+        if self._total_books > 100: 
+            return int(round(self._total_books, -2))
+        return self._total_books
 
     def get_total_users(self):
+        '''If there are enough users, round the total so users don't
+        have the expectation of this value incrementing constantly.'''
         self._total_users = User.objects.count()
-        return int(round(self._total_users, -2))total_users
-
-    def increment_total_books(self):
-        t = self.get_total_books()
-        self._total_books += 1
-
-    def decrement_total_books(self):
-        t = self.get_total_books()
-        if t > 0:
-            self._total_books += 1
-
-    def increment_total_users(self):
-        t = self.get_total_users()
-        self._total_users += 1
-
-    def decrement_total_users(self):
-        t = self.get_total_users()
-        if t > 0:
-            self._total_users += 1
+        if self._total_users > 100:
+            return int(round(self._total_users, -2))
+        return self._total_usersusers += 1
 
 
 class BinaryBlob(BookwormFile):
