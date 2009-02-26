@@ -730,17 +730,8 @@ d_content:
                 body = self._process_dtbook(xhtml)
                 if body is None:
                     raise UnknownContentException()
-        except ExpatError:
-            raise UnknownContentException()
-        except etree.XMLSyntaxError:
-            # Use the HTML parser
-            #log.warn('Falling back to html parser')
-            xhtml = etree.parse(StringIO(f), etree.HTMLParser())
-            body = xhtml.find('body')
-            if body is None:
-                raise UnknownContentException()
-        except UnknownContentException:
-            #log.warn('Was not valid XHTML; trying with BeautifulSoup')
+    (ExpatError, etree.XMLSyntaxError, UnknownContentException):
+                      #log.warn('Was not valid XHTML; trying with BeautifulSoup')
             try:
                 html = lxml.html.soupparser.fromstring(f)
                 body = html.find('.//body')
