@@ -417,7 +417,7 @@ class EpubArchive(BookwormModel):
                     toc_filename = opf.xpath('//opf:item[contains(@href, ".ncx")]',
                                              namespaces={'opf':NS['opf']})[0].get('href')
                 except IndexError:
-        on("Could not find an item matching %s in OPF <item> list" % (tocid), archive=self)
+        on("Could not find an item matching %s in OPF <item> liNCX file via OPF
 
     def _get_authors(sereturn "%s%s" % (content_path, toc_filenamef a is not None and a.text is not None]
         if len(authors) == 0:
