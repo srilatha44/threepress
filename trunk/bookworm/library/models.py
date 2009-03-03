@@ -23,7 +23,7 @@ from bookworm.library.epub.constants import NAMESPACES as NS
 from bookworm.library.epub.toc import NavPoint, TOC
 from bookworm.search import epubindexer
 
-import bookworm.library.epub.util as util
+import bookworm.library.epub.toc as util
 
 log = logging.getLogger('library.models')
 
@@ -417,7 +417,7 @@ class EpubArchive(BookwormModel):
                     toc_filename = opf.xpath('//opf:item[contains(@href, ".ncx")]',
                                              namespaces={'opf':NS['opf']})[0].get('href')
                 except IndexError:
-        on("Could not find an item matching %s in OPF <item> liNCX file via OPF
+        on("Could not find an item matching %s in OPF <item> liany NCX file. EpubCheck 1.0.3 may erroneously report this as valid.
 
     def _get_authors(sereturn "%s%s" % (content_path, toc_filenamef a is not None and a.text is not None]
         if len(authors) == 0:
@@ -510,7 +510,7 @@ ref')))
                     selector.selector# Change body rules but not if someone has specified it as a classname (there's
                     # probably a cleaner way to do this)
                     if 'body' in selector.selectorText and not '.body' in selector.selectorText:
-or.selectorText 
+r.selectorText 
                     
             except AttributeError:
                 pass # (was not a CSSStyleRule)
@@ -629,7 +629,10 @@ class BookAuthor(BookwormModel):
         '''Returns a metdata item's text content by tag name, or a list if mulitple names match.
         If as_string is set to True, then always return a comma-delimited string.'''
         if self._parsed_metadata is None:
-            self._parsed_metadata = util.xml_from_string(opf)
+            try:
+                self._parsed_metadata = util.xml_from_string(opf)
+            except InvalidEpubException:
+                return None
         text = []
         alltext = self._parsed_metadata.findall('.//{%s}%s' % (NS['dc'], metadata_tag))
         if as_string:
@@ -901,31 +904,20 @@ class SystemInfo():
         self._total_books = None
         self._total_users = None
 
-    def get_total_books(self):
+    def get_total_books(self'''If there are enough books, round the total so users don't
+        have the expectation of this value incrementing constantly.'''
         self._total_books = EpubArchive.objects.count()
+        if self._total_books > 100: 
+            return int(round(self._total_books, -2))
         return self._total_books
 
     def get_total_users(self):
+        '''If there are enough users, round the total so users don't
+        have the expectation of this value incrementing constantly.'''
         self._total_users = User.objects.count()
-        return self._total_users
-
-    def increment_total_books(self):
-        t = self.get_total_books()
-        self._total_books += 1
-
-    def decrement_total_books(self):
-        t = self.get_total_books()
-        if t > 0:
-            self._total_books += 1
-
-    def increment_total_users(self):
-        t = self.get_total_users()
-        self._total_users += 1
-
-    def decrement_total_users(self):
-        t = self.get_total_users()
-        if t > 0:
-            self._total_users += 1
+        if self._total_users > 100:
+            return int(round(self._total_users, -2))
+        return self._total_usersusers += 1
 
 
 class BinaryBlob(BookwormFile):
