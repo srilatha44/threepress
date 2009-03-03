@@ -671,10 +671,12 @@ class BookwormFile(BookwormModel):
     archive = models.ForeignKey(EpubArchive)
     path = models.CharField(max_length=255, default='')
 
-    def render(self):
+    def , user=None):
         return self.file
+
     class Meta:
         abstract = True
+ract = True
     def __unicode__(self):
         return u"%s [%s]" % (self.filename, self.archive.title)
 
