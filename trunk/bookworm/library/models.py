@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from django.utils.translation import ugettext_lazy as _
+
 from lxml import etree
 import lxml
 import lxml.html
@@ -847,7 +849,7 @@ class ImageFile(BookwormFile):
                            image=self,
                            data=self.data,
                            filename=self.idref)
-            b.save()
+           b.save()
 
 
     def get_data(self):
@@ -1028,6 +1030,7 @@ class UnknownContentException(InvalidEpubException):
     # We weren't sure how to parse the body content here
     pass
 
-order_fields = { 'title': 'book title',
-                 'orderable_author': 'first author',
-                 'created_time' : 'date added to your l
+order_fields = _('book title'),
+                 'orderable_author': _('first author'),
+                 'created_time' : _('date added to your library') }
+
