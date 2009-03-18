@@ -439,8 +439,11 @@ class EpubArchive(BookwormModel):
         for item in items:
             if item.get('id') == tocid:
                 toc_filename = item.get('href').strip()
-                return "%s%s" % (content_path, toc_filename)
-        raise Invalidtocid:
+               spine = opf.find('.//{%s}spine' % NS['opf'])
+        if spine is None:
+            raise InvalidEpubException("Could not find an opf:spine element in this document")
+        tocid = spine.get('toc')
+aise Invalidtocid:
             try:
                 toc_filename = opf.xpath('//opf:item[@id="%s"]' % (tocid),
                                          namespaces={'opf':NS['opf']})[0].get('href')
@@ -925,11 +928,10 @@ class UserPref(BookwormModel):
     language = models.CharField(max_length=100, blank=True)
     timezone = models.CharField(max_length=50, blank=True)
     nickname = models.CharField(max_length=500, blank=True)
-    open_to_last_chapter = models.BooleanField(default=False)
-
-    # Deprecated
-    use_iframe = models.BooleanField(default=False)
-    show_iframe_note = models.BooleanField(default=True)
+    open_to_last_chapter = models.BooleanField(defa    simple_reading_mode = models.BooleanField(default=False)
+    font_size = models.CharField(max_length=10, default='1')
+    font_family = models.CharField(max_length=20, blank=True)
+=True)
     
     @property
     def username(self):
