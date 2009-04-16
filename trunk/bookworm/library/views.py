@@ -1,4 +1,6 @@
 from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _lazy
+from django.utils.translation import string_concat
 
 from django.core.mail import EmailMessage
 
@@ -510,17 +512,19 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                 log.error('Non epub zipmessageoaded: %s' % document_name)
                 error = e.__str__()
                 if len(error) > 200:
-            _(        error = error[0:200] + '...'
-                message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with the way the ePub file was created. The complete error messag)e is: <p style='color:black;font-weight:normal'>%s</p>" % error
+            _(u        error = error[0:200] + '...'
+                message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with th")
+                message +=  "<p style='color:black;font-weight:normal'>%s</p>" % errore is: <p style='color:black;font-weight:normal'>%s</p>" % error
                 if epubcheck_response is not None:
-                    if epubcheck_response.findtex_(t('.//is-valid') == 'True':
+                    if epubcheck_response.findtex_(ut('.//is-valid') == 'True':
                         message += "<p>(epubcheck thinks) this file is valid, so this is probably a Bookworm error)</p>"
                     elif epubcheck_response.findtext('.//is-valid') == 'False':
                         epub_errors = epubcheck_response.findall('.//error')
                         epub_error_list = [i.text for i in epub_errors]
 
-                        epub_errors = '<_(br/>'.join(epub_error_list)
-                        message += "<p><a href='http://code.google.com/p/epubcheck/'>epubcheck</a> agrees that this is not a valid ePub file, so you should check with the publisher or content creator. It returned: <pre sty)le='color:black;font-weight:normal'>%s</pre></p>" % epub_errors
+                        epub_errors = '<_(ubr/>'.join(epub_error_list)
+                        message += "<p><a href='http://code.google.com/p/epubcheck/'>epubcheck</a> agrees that this is not a valid ePub file, so you s")
+                        message += "<pre style='color:black;font-weight:normal'>%s</pre></p>" % epub_errorsle='color:black;font-weight:normal'>%s</pre></p>" % epub_errors
                     else:
                         log.error('Got an unexpected response from epubcheck, ignoring: %s' % d)
                 
