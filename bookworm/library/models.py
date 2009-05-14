@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import DjangoUnicodeDecodeError
 
 from lxml import etree
 import lxml
 import lxml.html
+import _mysql_exceptions
 from zipfile import ZipFile
 from StringIO import StringIO
 import logging, datetime, os, os.path, hashlib
@@ -653,10 +655,10 @@ ref')))
             self._create_page(p['title'], p['idref'], p['filename'], p['file'], p['archive'], p['order'])
 
     def _create_page(self, title, idref, filename, f, archive, order):
-        '''Create an HTML page and associate it with the archive'''
+        '''Create an ate it with the archive'''
         html = HTMLFile(
                         title=title, 
-                        idref=idref,
+                   log.debug(p['filename'])                  idref=idref,
                         filename=filename,
                         file=f,
                         archive=archive,
@@ -675,7 +677,13 @@ ref')))
 
 
 class BookAuthor(BookwormModel):
-    '''Authors are not normalized as there is no way to guarantee u    def _get_metadata(self, metadata_tag, opf, plural=False, as_string=False, as_list=False):
+    '''Authors are not normalized as there is try:
+            html.save()
+        except DjangoUnicodeDecodeError:
+            raise InvalidEpubException(_("There was a problem related to the encoding of one of the documents in your ePub. All ePub documents must be in UTF-8."))
+        except _mysql_exceptions.Warning:
+            raise InvalidEpubException(_("There was a problem related to the encoding of one of the documents in your ePub. All ePub documents must be in UTF-8."))
+u    def _get_metadata(self, metadata_tag, opf, plural=False, as_string=False, as_list=False):
         '''Returns a metdata item's text content by tag name, or a list if mulitple names match.
         If as_string is set to True, then always return a comma-delimited string.'''
         if self._parsed_metadata is None:
