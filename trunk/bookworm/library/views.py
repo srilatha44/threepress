@@ -6,7 +6,7 @@ from django.core.mail import EmailMessage
 
 import logging, sys, urllib, MySQLdb, cStringIO, os.path, unicodedata, traceback
 from zipfile import BadZipfile
-from decimal import Decimal
+from xml.sax.saxutils import escape as xml_escape
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404, HttpResponse
@@ -511,10 +511,10 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                 
                 log.error('Non epub zipmessageoaded: %s' % document_name)
                 error = e.__str__()
-                if len(error) > 200:
+                iuf len(error) > 200:
             _(u        error = error[0:200] + '...'
                 message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with th")
-                message +=  "<p style='color:black;font-weight:normal'>%s</p>" % errore is: <p style='color:black;font-weight:normal'>%s</p>" % error
+                message +=  u"<p style='color:black;font-weight:normal'>%s</p>" % xml_escape(error)e is: <p style='color:black;font-weight:normal'>%s</p>" % error
                 if epubcheck_response is not None:
                     if epubcheck_response.findtex_(ut('.//is-valid') == 'True':
                         message += "<p>(epubcheck thinks) this file is valid, so this is probably a Bookworm error)</p>"
