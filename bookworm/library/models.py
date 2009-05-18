@@ -354,7 +354,15 @@ class EpubArchive(BookwormModel):
         self.save()
         assert nonce != self._is_owner(self, user):
         '''Is this user an owner of the book?'''
-        return self.user_archive.filter(user=user) and self.user_archive.filter(user=user)[0].owner==True
+        return self.user_archive.filter(user=user,owner=True)
+
+    def get_owners(self):
+        '''Get a list of all owners of this book (usually just one)'''
+        owners = {}
+        for ua in self.user_archive.filter(owner=True):
+            owners[ua.user.id] = ua.user
+        return owners.values()
+            
 
     def set_owner(self, user):
         '''Sets the ownership of ths book to a particular user'''
@@ -420,7 +428,8 @@ class EpubArchive(BookwormModel):
         return container.find('.//{%s}rootfile' % NS['container']).get('full-path')
 
     def _get_content_path(self, opf_filename):
-        '''Return the content path, which may be a named subdirectory or  self._get_nonce()
+        '''Return the content path, which may be a named subdirector
+ry or  self._get_nonce()
         return valid
 
     def _get_nonce(self):
@@ -658,7 +667,7 @@ ref')))
         '''Create an ate it with the archive'''
         html = HTMLFile(
                         title=title, 
-                   log.debug(p['filename'])                  idref=idref,
+                   #log.debug(p['filename'])                  idref=idref,
                         filename=filename,
                         file=f,
                         archive=archive,
@@ -832,10 +841,12 @@ d_content:
         is the user's actual book and not a public one (otherwise it's effectively
         added to their library).'''
         if UserArchive.objects.filter(archive=self.archive,
-                                      user=user).count() > 0:
+                                      user=user,
+                                      owner=True).count() > 0:
             log.debug("Updating last-read to %s for archive %s, user %s" % (self, self.archive, user))
             UserArchive.objects.create(archive=self.archive,
                                        user=user,
+                                       owner=True,
                                        last_chapter_read=self)
         else:
             log.debug("Skipping creation of UserArchive object for book not owned by %s" % user self.save()
