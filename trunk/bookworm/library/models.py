@@ -541,7 +541,10 @@ aise Invalidtocid:
                 content_type=i['content_type'],
                 archive=self)
             image.save()  
-    def _image_class(self):
+    def _image_class(f self._image_class().objects.filter(filename=i['filename'],
+                                                archive=self).count() > 0:
+                log.warn("Already had an image for archive %s with filename %s; skipping" % (self.name, i['filename']))
+                return _image_class(self):
         return ImageFile
 
     def _get_stylesheets(self, archive, items, content_path):
