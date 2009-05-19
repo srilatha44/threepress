@@ -774,8 +774,17 @@ class EpubPublisher(BookwormModel):
     
 class HTMLFile(BookwormFile):
     '''Usually an individual page i.'''
-    title = models.CharField(max_length=5000)
-    order = models.PositiveSmallIntegerField(default=1)
+    title = models.CharField(max_length=5000,
+                             help_text='The named title of the chapter or file')
+
+    order = models.PositiveSmallIntegerField(default=1,
+                                             help_text='The play order as derived from the NCX')
+
+    head_extra = models.TextField(null=True,
+                                  help_text='Extra information from the document <head> which should be injected into the Bookworm page at rendering time')
+
+
+    stylesheets = models.ManyToManyField('StylesheetFile', blank=True, null=True)
 
     # XHTML content that has been sanitized.  This isn't done until
     # the user requests to access the file or until the automated
@@ -807,8 +816,10 @@ d_content:
         try:
             xhtml = etree.XML(f, etree.XMLParser())
             body = xhtml.find('{%s}body' % NS['html'])
+ head = xhtml.find('{%s}headd('{%s}body' % NS['html'])
             if body is None:
                 body = xhtml.find('{%s}book' % NS['dtbook'])
+     head = xhtml.find('{%s}headd('{%s}book' % NS['dtbook'])
                 # This is DTBook; process it
                 body = self._process_dtbook(xhtml)
                 if body is None:
@@ -818,12 +829,56 @@ d_content:
             try:
                 html = lxml.html.soupparser.fromstring(f)
                 body = html.find('.//body')
+     head = html.find('.//headnd('.//body')
                 if body is None:
                     raise 
             except:
                 # Give up
                 log.error("Giving up on this content")
-                raise UnknownContentException()
+                raise UnknownContentE
+        # Find any <style> blocks in the document <head> and add them
+        if head is not None:
+
+            styles = []
+
+            for style in head.findall('.//style'):
+                styles.append(style)
+
+            for style in head.findall('.//{%s}style' % NS['html']):
+                styles.append(style)
+
+            for style in styles:
+                if not self.head_extra:
+                    self.head_extra = ''
+                self.head_extra += '\n' + self.archive._parse_stylesheet(style.text)
+
+            if self.head_extra:
+                self.head_extra = '<style type="text/css">%s</style>' % self.head_extra
+
+            # Find any CSS references in the <head> and link them to the StylesheetFiles 
+            # identified from the OPF
+            links = []
+
+            for link in head.findall('.//link'):
+                links.append(link)
+
+            for link in head.findall('.//{%s}link' % NS['html']):
+                links.append(link)
+
+            for link in links:
+                try:
+                    css = StylesheetFile.objects.get(archive=self.archive,
+                                                     filename=link.get('href'))
+                    self.stylesheets.add(css)
+                except StylesheetFile.DoesNotExist:
+                    log.warn("CSS %s was declared in the HTML but no matching StylesheetFile was found" % link.get('href'))
+
+        else:
+            log.warn("No <head> found; this could be a malformed document")
+
+
+        
+Exception()
         body = self._clean_xhtml(body)
         div = etree.Element('div')
         div.attrib['id'] = 'bw-book-content'
@@ -892,7 +947,7 @@ d_content:
             # Script tags are removed
             if element.tag == 'script':
                 p = element.getparent()
-                p.remove(element)
+                p.remov                e(element)
 
         return xhtml
 
