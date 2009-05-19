@@ -509,13 +509,14 @@ aise Invalidtocid:
                 data['file'] = None
  
                 if item.get('media-type') == constants.SVG_MIMETYPE:
-                    data['file'] = unicode(content, ENC)
+                    data['file'] = unicode(conte
+                href = unquote_plus(item.get('href'))
+                ent, ENC)
 
       try:
              else:
-                    # This is a binary file, like a jpeg
-                    data['except KeyError:
-                    log.warn("Missing image %s; skipping" % item.get('href'))
+                    # This is a binary file, likhref             data['except KeyError:
+                    log.warn("Missing image %s; skipping" % href)
                     continue           data['data'] = content
 
                 (data['path'], data['filename']) = os.path.split(item.get('href'))
@@ -527,11 +528,11 @@ aise Invalidtocid:
 
         self._create_images(images)                
 
-    def _create_images(self, images):
-        for i in images:
+    def href)
+                   for i in images:
             f = i['file']
             if f == None:
-                f = ''
+                f                f = ''
             image = self._image_class()(
                 idref=i['idref'],
                 file=f,
