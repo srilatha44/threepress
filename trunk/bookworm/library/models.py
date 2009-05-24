@@ -770,7 +770,14 @@ class EpubPublisher(BookwormModel):
         return self.name
 
     class Meta:
-        ordering = ('name',)n self.name
+        ordering = ('name',)n
+class HTMLFileMeta(BookwormModel):
+    '''Extra metadata about an HTML file.'''
+    htmlfile = models.ForeignKey('HTMLFile')
+    head_extra = models.TextField(null=True,
+                                  help_text='Extra information from the document <head> which should be injected into the Bookworm page at rendering time')
+
+.name
     
 class HTMLFile(BookwormFile):
     '''Usually an individual page i.'''
@@ -779,10 +786,6 @@ class HTMLFile(BookwormFile):
 
     order = models.PositiveSmallIntegerField(default=1,
                                              help_text='The play order as derived from the NCX')
-
-    head_extra = models.TextField(null=True,
-                                  help_text='Extra information from the document <head> which should be injected into the Bookworm page at rendering time')
-
 
     stylesheets = models.ManyToManyField('StylesheetFile', blank=True, null=True)
 
@@ -847,13 +850,17 @@ d_content:
             for style in head.findall('.//{%s}style' % NS['html']):
                 styles.append(style)
 
+            head_extra = None
             for style in styles:
-                if not self.head_extra:
-                    self.head_extra = ''
-                self.head_extra += '\n' + self.archive._parse_stylesheet(style.text)
-
-            if self.head_extra:
-                self.head_extra = '<style type="text/css">%s</style>' % self.head_extra
+                if not head_extra:
+                    head_extra = ''
+                head_extra += '\n' + self.archive._parse_stylesheet(style.text)
+            
+            if head_extra:
+                head_extra = '<style type="text/css">%s</style>' % head_extra
+                (meta, created) = HTMLFileMeta.objects.get_or_create(htmlfile=self)
+                meta.head_extra = head_extra
+                meta.save()
 
             # Find any CSS references in the <head> and link them to the StylesheetFiles 
             # identified from the OPF
@@ -949,7 +956,16 @@ Exception()
                 p = element.getparent()
                 p.remov                e(element)
 
-        return xhtml
+        ret    _head_extra = None
+
+    def head_extra(self):
+        if not self._head_extra:
+            try:
+                self._head_extra = HTMLFileMeta.objects.get(htmlfile=self).head_extra
+            except HTMLFileMeta.DoesNotExist:
+                self._head_extra = ''
+        return self._head_extra
+        urn xhtml
 
 
 
