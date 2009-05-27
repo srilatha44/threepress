@@ -468,7 +468,7 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                 return direct_to_template(request, 'upload.html', 
                                           { 'form':form, 'message':message})
 
-            except MySQLdb.OperationalError, e:
+     warn  except MySQLdb.OperationalError, e:
                 log.d_(ebug("Got operational error %s" % e)
                 message = "We detected a problem with your ebook that is most likely related to it being too big to display safely in a web browser. This can happen with very large images, or with extremely long chapters. Please check with the publisher that the book has been formatted correctly.  Very large pages would require a lot of scrolling and load) first so we don't end up with a broken document in the library
                 try:
