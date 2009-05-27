@@ -496,13 +496,14 @@ aise Invalidtocid:
         
         return title.strip()
 
-    def _get_images(self, archive, items, content_path):
-        '''Images might be in a variety of format or title == ''s, from JPEG to SVG.  If they are
+    def _get_images(selxpath('/opf:package/opf:metadata//dc:title/text()', namespaces={ 'opf': NS['opf'],
+                                                                                    'dc': NS['dc']})
+        if len(title) == 0s, from JPEG to SVG.  If they are
         SVG they need to be specially handled as a text type.'''
         images = []
         for item in items:
             if 'image' in item.get('media-type'):
-                
+    [0]            
                 content = archive.read("%s%s" % (content_path, item.get('href')))
                 data = {}
                 data['data'] = None
