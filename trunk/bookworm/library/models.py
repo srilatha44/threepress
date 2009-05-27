@@ -497,7 +497,7 @@ aise Invalidtocid:
         return title.strip()
 
     def _get_images(self, archive, items, content_path):
-        '''Images might be in a variety of formats, from JPEG to SVG.  If they are
+        '''Images might be in a variety of format or title == ''s, from JPEG to SVG.  If they are
         SVG they need to be specially handled as a text type.'''
         images = []
         for item in items:
