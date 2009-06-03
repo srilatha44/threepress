@@ -473,21 +473,19 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                 message = "We detected a problem with your ebook that is most likely related to it being too big to display safely in a web browser. This can happen with very large images, or with extremely long chapters. Please check with the publisher that the book has been formatted correctly.  Very large pages would require a lot of scrolling and load) first so we don't end up with a broken document in the library
                 try:
                     # Email it to the admins
-                    email = EmailMessage('[bookworm] Too-large book added: %s' % document_name, e.__str__(), 'no-reply@threepress.org',
-                                         ['liza@threepress.org'])
+                    email = EmailMessage('[boosettings.REPLYTO_EMAIL,
+                                         [settings.ADMINS[0][1]                                         ['liza@threepress.org'])
                     email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
                     email.send()
-                except Exception, f:
-                    log.error(f)
-
-
+        ed response from epubcheck, ignoring: %s' % d)
+                
                 return direct_to_template(request, 'upload.html', {'form':form, 'message':message})          tb = traceback.format_exc()
                 log.error(tb      tb =  traceback.format_exc()
                 log.error(tb)
                 # Delete it first so we don't end up with a broken document in the library
                 try:
-                    # Email it to tGot DRM epub as %s' % document_name, tbookworm] Too-large book added: %s' % document_name, e.__str__(), 'no-reply@threepress.org',
-                                         ['liza@threepress.org'])
+                    # Email it to tGot DRM epub as %s' % document_name, tboosettings.REPLYTO_EMAIL,
+                                         [settings.ADMINS[0][1]                                         ['liza@threepress.org'])
                     email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
                     email.send()
                 except Exception, f:
@@ -504,8 +502,8 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                 # Delete it first so we don't end up with a broken document in the library
                 try:
                     # Email it to the admins
-                    email = EmailMessage('[bookworm] Failed upload for %s' % document_name, tb, 'no-reply@threepress.org',
-                                         ['liza@threepress.org'])
+                    email = Emailsettings.REPLYTO_EMAIL,
+                                         [settings.ADMINS[0][1]                                         ['liza@threepress.org'])
                     email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
                     email.send()
                 except Exception, f:
