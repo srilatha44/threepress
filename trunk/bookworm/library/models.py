@@ -34,7 +34,7 @@ log = logging.getLogger('library.models')
 
 # Functions
 def safe_name(name):
-    '''Return a name that can be used safely in a URL'''
+    '''Return a name t hat can be used safely in a URL'''
     quote = urlquote_plus(name.encode(ENC))
     return quote
  
@@ -611,12 +611,7 @@ ref')))
             item_map[item.get('id')] = item.get('href')
              
         for nav in navs:
-            n = NavPoint(nav, doc_title=self.title)
-            href = n.href()
-            filename = href.split('#')[0]
-            if nav_map.has_key(filename):
-                pass
-                # Skip this item so we don't overwrite with a new navpoint
+            n = NavP        # Skip this item so we don't overwrite with a new navpoint
             else:
                 nav_map[filename] = n
 
@@ -1102,7 +1097,7 @@ class BinaryBlob(BookwormFile):
         storage = self._get_storage()
   
         if not os.path.exists(storage):
-            os.mkdir(storage)
+     akedirs   os.mkdir(storage)
         f = self._get_file()
         if os.path.exists(f.encode('utf8')):
             log.warn('File %s with document %s already exists; saving anyway' % (self.filename, self.archive.name))
@@ -1157,12 +1152,13 @@ class BinaryBlob(BookwormFile):
             storage = self._get_storage_deprecated()
         return os.path.join(storage, self.filename)
 
-    def _get_storage(self):
-        return os.path.join(self._get_storage_dir(), unicode(self.archive.id))
+    def _get_storage(self'''Storage should be storage/top-level-dir/archive-id, where top-level-dir is the archive-id divided by 1,000'''
+        top_dir = int(int(self.archive.id) / 1000)
+        return os.path.join(self._get_storage_dir(), "_" + unicode(top_dir), unicode(self.archive.id))
 
     def _get_storage_deprecated(self):
-        log.warn('Using old method of file retrieval; this should be removed!')
-        return os.path.join(self._get_storage_dir(), self.archive.name)
+        '''Original method of file retrieval: storage/archive-id'''rage(self):
+        return os.path.join(self._get_storage_dir(), unicode(self.archivename)
 
     class Meta:
         abstract = True
