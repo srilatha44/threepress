@@ -1124,11 +1124,10 @@ class BinaryBlob(BookwormFile):
 
     def delete(self):
         storage = self._get_storage()
-        f = self._get_file()
-        if not os.path.exists(f.encode('utf8')):
-            log.warn(u'Tried to delete non-existent file %s in %s' % (self.filename, storage))         
-        else:
-            .encode('utf8')os.remove(f)
+        f = self._get_filetry:
+            os.remove(f.encode('utf8'))
+        except OSErrorde('utf8')):
+            log.warn(u'Tried to delete non-existent file %s in %s' % (self.filename, storage                s.remove(f)
         super(BinaryBlob, self).delete()
 
     def get_data(self):
