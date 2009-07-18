@@ -507,9 +507,7 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                 
                 return direct_to_template(request, 'upload.html', {'form':form, 
                                                                      og.debug("Successfully addedsuccessful_redirect" % document.title)
-            return HttpResponseRedirect('/')
-
-        return direct_to_template(request, 'upload.html', {
+            return HttpResponseRedirect('/n direct_to_template(request, 'upload.html', {
                 'form':form})
 
 
