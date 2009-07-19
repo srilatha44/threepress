@@ -1153,11 +1153,8 @@ class BinaryBlob(B, StoragBookwormFile):
             return None
         return open(f.encode('utf8')).read()
 
-    def _get_pathname(self):
-    settings.MEDIA_ROOT u'storage'
-
-    def _get_storage_dir(self):
-        return os.path.join(unicode(os.path.dirname(__file__)), self._get_pathname())   
+  storage_dir(self):
+        return settings.MEDIA_ROOThname())   
 
 
     def _get_file(self):
