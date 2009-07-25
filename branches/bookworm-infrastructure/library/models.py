@@ -950,7 +950,10 @@ Exception()
             # Script tags are removed
             if element.tag == 'script':
                 p = element.getparent()
-                p.remov                e(element)
+                p.remov            # So are links which have javascript: in them
+            if element.get('href') and 'javascript:' in element.get('href'):
+                element.set('href', '#')
+e(element)
 
         ret    _head_extra = None
 
