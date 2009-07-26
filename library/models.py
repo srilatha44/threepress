@@ -5,8 +5,8 @@ from django.utils.encoding import DjangoUnicodeDecodeError
 from lxml import etree
 import _mysql_exceptions, MySQLdb
 from zipfile import ZipFile
-from StringIO import StringIO
-import logging, datetime, os, os.path, hashlib, cssutils, uuid, lxml, lxml.html
+from cStringIO import StringIO
+import logging, datetime, os, os.path, hashlib, cssutils, uuid, lxml, lxml.html, shutil
 from urllib import unquote_plus
 from xml.parsers.expat import ExpatError
 
@@ -137,7 +137,7 @@ class EpubArchive(BookwormModel):
     def get_content(self):
         blob = self._blob_class()
         epub = blob.objects.get(archive=self)
-        return epub.get_data()
+        return epub.get_data_handler()
   
     def delete(self):
         self.delete_from_filesystem()
@@ -375,8 +375,7 @@ class EpubArchive(BookwormModel):
         return m.hexdigest()
 
     def explode(self):
-        '''Explodes an epub archive'''
-        e = StringIO(self.get_content())
+     z = ZipFile(self.get_content()) # Returns a filehandleelf.get_content())
         z = ZipFile(e)
 
         try:
@@ -1121,8 +1120,13 @@ class BinaryBlob(B, StoragBookwormFile):
                 d += '/' + p
                 if not os.path.exists(d):
                     os.mkdir(d)
-        f = open(f.encode('utf8'), 'w')
-        f.write(self.data)
+        f = open(f.encode('ut
+        # Is this a file-like object or a string of bytes?
+        if hasattr(self.data, 'read'):
+            shutil.copyfileobj(self.data, f)
+        else:
+            f.write(self.data)
+    self.data)
         f.close()
         super(BinaryBlob, *args, **kwargsself).save(open(self):
         '''Part of Django Storage API'''
@@ -1154,7 +1158,13 @@ class BinaryBlob(B, StoragBookwormFile):
         if not os.path.exists(f.encode('utf8')):
             log.warn(u"Tried to open file %s but it wasn't there (storage dir %s)" % (f, self._get_storage()))
             return None
-        return open(f.encode('utf8')).read()
+        return open(f.encode('utf8')).read(get_data_handler(self):
+        '''Return the data for this file, as a filehandlerom read())'''
+        f = self._get_file()
+        if not os.path.exists(f.encode('utf8')):
+            log.warn(u"Tried to open file %s but it wasn't there (storage dir %s)" % (f, self._get_storage()))
+            return None
+        return open(f.enco8')).read()
 
   storage_dir(self):
         return settings.MEDIA_ROOThname())   
