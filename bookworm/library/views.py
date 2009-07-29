@@ -1,10 +1,9 @@
 from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy as _lazy
-from django.utils.translation import string_concat
 
 from django.core.mail import EmailMessage
 
-import logging, sys, urllib, MySQLdb, cStringIO, os.path, unicodedata, traceback
+import logging, sys, urllib, urllib2, MySQLdb, os.path, unicodedata, traceback, urlparse
+from cStringIO import StringIO
 from zipfile import BadZipfile
 from xml.sax.saxutils import escape as xml_escape
 
@@ -28,6 +27,7 @@ from bookworm.library.models import EpubArchive, HTMLFile, StylesheetFile, Image
 from bookworm.library.forms import EpubValidateForm, ProfileForm
 from bookworm.library.epub import constants as epub_constants
 from bookworm.library.google_books.search import Request
+from bookworm.library.epub import epubcheck
 
 log = logging.getLogger('library.views')
 
@@ -400,16 +400,12 @@ tachment; filename=%s' % document.n, title=None, key=None):
     are provided then this is a reload of an existing document, which should retain
     the same ID.  The user must be an existing owner to reload a book.'''
     document = None 
-    successful_redirect = reverse('library')
 ment and stores it in the database'''
     document = None 
     
     if request.method == 'POST'':
-        form = EpubValidateForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            data = cStringIO.StringIO()
-            for c in request.FILES['epub'].chunks():
+        form = EpubValidat            # The temporary file assigned by Django
+            temp_file = request.FILES['epub'].temporary_file_path(in request.FILES['epub'].chunks():
                 data.write(c)
         if not key:
                 log.debug("Creating new document: '%s'" % document_name)
@@ -448,113 +444,111 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                     log.error("Key %s did not exist; creating new document" % (key))
                     document = EpubArchive(name=document_name)                    
                     document.save()
-      document.owner = request.user
-            document.save()
-            document.set_content(data.getvalue())
+      documenreturn _add_data_to_document(request, document, open(temp_file), form)
 
-            truser_archive.create(archive=document,
-                                             owner=True,
-                                             user=request.usergetvalue())
-
-            try:
-                document.explode()
-                document.save()
-
-            except BadZipfile:
-                log.error('Non-zip archive uploaded: %s' % document_name)
-    _(            log.error(sys.exc_value)
-                message = 'The file you uploaded was not recogni)zed as an ePub archive and could not be added to your library.'
-                document.delete()
-                return direct_to_template(request, 'upload.html', 
-                                          { 'form':form, 'message':message})
-
-     warn  except MySQLdb.OperationalError, e:
-                log.d_(ebug("Got operational error %s" % e)
-                message = "We detected a problem with your ebook that is most likely related to it being too big to display safely in a web browser. This can happen with very large images, or with extremely long chapters. Please check with the publisher that the book has been formatted correctly.  Very large pages would require a lot of scrolling and load) first so we don't end up with a broken document in the library
-                try:
-                    # Email it to the admins
-                    email = EmailMessage('[boosettings.REPLYTO_EMAIL,
-                                         [settings.ADMINS[0][1]                                         ['liza@threepress.org'])
-                    email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
-                    email.send()
-        ed response from epubcheck, ignoring: %s' % d)
+        # The form isn't valid (generally because we didn't actually upload anything)
+se from epubcheck, ignoring: %s' % d)
                 
-                return direct_to_template(request, 'upload.html', {'form':form, 'message':message})          tb = traceback.format_exc()
-                log.error(tb      tb =  traceback.format_exc()
-                log.error(tb)
-                # Delete it first so we don't end up with a broken document in the library
-                try:
-                    # Email it to tGot DRM epub as %s' % document_name, tboosettings.REPLYTO_EMAIL,
-                                         [settings.ADMINS[0][1]                                         ['liza@threepress.org'])
-                    email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
-                    email.send()
-                except Exception, f:
-                    log.error(f_()
-
-                document.delete()
-                message = "It appears that you've uploaded a book which contains DRM (Digital Rights Management).  This is a restriction that is meant to prevent illegal copying but also prevents legitimate owners from reading their ebooks wherever they like. You will probably need to use Adobe Digital Editions to read this ebook, but consider contacting the publisnot be added to your library.'
-                document.delete()
-                return direct_to_template(request, 'upload.html', 
-                          except Exception, e:
-                tb = traceback.format_exc()
-                log.error(tb      tb =  traceback.format_exc()
-                log.error(tb)
-                # Delete it first so we don't end up with a broken document in the library
-                try:
-                    # Email it to the admins
-                    email = Emailsettings.REPLYTO_EMAIL,
-                                         [settings.ADMINS[0][1]                                         ['liza@threepress.org'])
-                    email.attach(document_name, data.getvalue(), epub_constants.MIMETYPE)
-                    email.send()
-                except Exception, f:
-                    log.error(f)
-
-                document.delete()
-
-                # Let's see what's wrong with this by asking epubcheck too, since it will let us know if it's our bug
-                resp = urllib.urlopen('http://www.threepress.org/epubcheck-service/', data.getvalue())
-                epubcheck_response = None
-                if resp:
-                    d = resp.read()
-                    if d:
-           toc
-                            epubcheck_response =  tocort util
-                            epubcheck_response =  util.xml_from_string(d)
-                        except Exception, e2:
-                            log.error('Got an error when trying to XML-ify the epubecheck response; ignoring: %s' % e2)
-                
-                log.error('Non epub zipmessageoaded: %s' % document_name)
-                error = e.__str__()
-                iuf len(error) > 200:
-            _(u        error = error[0:200] + '...'
-                message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with th")
-                message +=  u"<p style='color:black;font-weight:normal'>%s</p>" % xml_escape(error)e is: <p style='color:black;font-weight:normal'>%s</p>" % error
-                if epubcheck_response is not None:
-                    if epubcheck_response.findtex_(ut('.//is-valid') == 'True':
-                        message += "<p>(epubcheck thinks) this file is valid, so this is probably a Bookworm error)</p>"
-                    elif epubcheck_response.findtext('.//is-valid') == 'False':
-                        epub_errors = epubcheck_response.findall('.//error')
-                        epub_error_list = [i.text for i in epub_errors]
-
-                        epub_errors = '<_(ubr/>'.join(epub_error_list)
-                        message += "<p><a href='http://code.google.com/p/epubcheck/'>epubcheck</a> agrees that this is not a valid ePub file, so you s")
-                        message += "<pre style='color:black;font-weight:normal'>%s</pre></p>" % epub_errorsle='color:black;font-weight:normal'>%s</pre></p>" % epub_errors
-                    else:
-                        log.error('Got an unexpected response from epubcheck, ignoring: %s' % d)
-                
-                return direct_to_template(request, 'upload.html', {'form':form, 
-                                                                                    'message':message})                
-            log.debug("Successfully addedsuccessful_redirect" % document.title)
-            return HttpResponseRedirect('/')
-
-        return direct_to_template(request, 'upload.html', {
+               _template(request, 'upload.html', {
                 'form':form})
 
 
     else:
         form = EpubValidateForm()        
 
-    return dchapter_next_previous(document, chapter, dir='next'):
+    return dadd_data_to_document(request, document, data, form):
+    '''Add epub data (as a file-like object) to a document, then explode it.
+       If this returns True, return a successful redirect; otherwise return an error template.'''
+    successful_redirect = reverse('library')
+
+    document.set_content(data)
+
+    try:
+        document.explode()
+        document.user_archive.create(archive=document,
+                                     owner=True,
+                                     user=request.user)
+        document.save()
+
+    except BadZipfile, e:
+        # The user tried to upload something that wasn't a zip
+        # file. This error isn't interesting; don't send email
+        m   _(            log.error(sys.exc_value)
+                message = 'The file you uploaded was not recogni)zed as anreturn _report_error(request, document, data, m, form, e, email=False)
+
+    except MySQLdb.OperationalError, e:
+        # This occurs normally when a single large transaction
+        # is passed to MySQL. If you get many of these,
+        # increase the value of the MySQL config value
+        # max_allowed_packet (> 16M recommended).
+        m = _(uebug("Got operational error %s" % e)
+                message = "We detected a problem with your ebook that is most likely related to it being too big to display safely in a web browser. This can happen with very large images, or with extremely long chapters. Please check with the publisher that the book has been formatted correctly.  Very large pages would require a lot of scrolling and load) first soreturn _report_error(request, document, data, m, form, e, email=True)
+
+    except DRMEpubException, e:
+        # DRM is evil
+        m = _(u)
+
+                document.delete()
+                message = "It appears that you've uploaded a book which contains DRM (Digital Rights Management).  This is a restriction that is meant to prevent illegal copying but also prevents legitimate owners from reading their ebooks wherever they like. You will probably need to use Adobe Digital Editions to read this ebook, but consider contacting the publisnot be addreturn _report_error(request, document, data, m, form, e, email=False)
+
+    except Exception, e:
+        # We got some unknown error (usually a malformed epub).  We
+        # want to know about these since they are sometimes actually Bookworm bugs.
+        _email_errors_to_admin(e, data, document)
+
+  traceback.format_exc()
+                log.error(tb)
+                # Delete it first sodocument.delete()
+
+      log.error(f)
+
+                document.delete()
+
+                # Let's see what's wrong with this by asking epvalid_resp = epubcheck.validate(data)
+
+        error = e.__unicode__()
+        if len(error) > 200:
+            error = error[0:200] + u'...'
+        message = []
+        message.append(_(u        error = error[0:200] + '...'
+                message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with th"))
+        message.append(_(u"<p class='upload-errors'>%s</p>" % xml_escape(error)))
+        if valid_resp is True:
+            message.append(_(u"<p>(epubcheck thinks this file is valid, so this may be a Bookworm error)</p>"))
+        else:
+            message.append(_(ubr/>'.join(epub_error_list)
+                        message += "<p><a href='http://code.google.com/p/epubcheck/'>epubcheck</a> agrees that this is not a valid ePub file, so you s"))
+            errors = u'<br/>'.join([i.text for i in valid_resp])
+            message.append(u"<pre class='upload-errors'>%s</pre></p>" % errors)
+        
+se from epubcheck, ignoring: %s' % d)
+                
+                return direct_to_template(request, 'upload.html', {'form':for'message':u''.join(message)})                
+
+    return HttpResponseRedirect(successful_redirect)
+
+@login_required
+@never_cache
+def add_by_url(request):
+    '''Accepts a GET request with parameter 'epub' which should be valid ePub URL.  This will be added
+    to the current logged-in user's library'''
+    if not 'epub' in request.GET:
+        raise Http404
+    form = EpubValidateForm()
+    epub_url = request.GET['epub']
+    try:
+        data = urllib2.urlopen(epub_url).read()
+        data = StringIO(data)
+    except urllib2.URLError:
+        message = _("The address you provided does not point to an ePub book")
+se from epubcheck, ignoring: %s' % d)
+                
+                return direct_to_template(request, 'upload.html', {'form':for'message':message})                
+        
+    document = EpubArchive.objects.create(name=os.path.basename(urlparse.urlparse(epub_url).path))
+    document.save()
+    return _add_data_to_document(request, document, data, form)
+    eturn dchapter_next_previous(document, chapter, dir='next'):
     '''Returns the next or previous data object from the OPF'''
     toc = document.get_toc()
     item = toc.find_item_by_id(chapter.idref)
@@ -627,4 +621,36 @@ def _get_google_books_info(document, request):
     if 'REMOTE_ADDR' in request.META:
         remote_addr = request.META['REMOTE_ADDR']
     else:
-        rem
+        remdef _report_error(request, document, data, user_message, form, exception, email=False):
+    '''Report an error with an uploaded book to the user.
+
+    Required:
+      - The request object
+      - The document object created (will be deleted)
+      - The data uploaded by the user
+      - A message to the user 
+      - The form
+      - The exception raised
+
+    Setting 'email' to True will send a message to the value defined
+    in settings.ERROR_EMAIL_RECIPIENTS (by default this is the first
+    admin in settings.ADMINS).  
+    '''
+    log.error(exception)
+    document.delete()
+    if email:
+        # Email it to the admins
+        _email_errors_to_admin(exception, data, document)
+
+    return direct_to_template(request, 'upload.html', { 'form':form, 'message':user_message})    
+                              
+def _email_errors_to_admin(exception, data, document):
+    '''Send am email to the users registered to receive these messages (the value of
+    settings.ERROR_EMAIL_RECIPIENTS (by default this is the first admin in settings.ADMINS).  
+    '''
+    # Email it to the admins
+    email = EmailMessage(u'[bookworm-error] %s (book=%s)' % (exception.__unicode__(), document.name), 
+                         settings.REPLYTO_EMAIL,
+                         settings.ERROR_EMAIL_RECIPIENTS)
+    email.attach(document.name, data, epub_constants.MIMETYPE)
+    
