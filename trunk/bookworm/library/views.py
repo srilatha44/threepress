@@ -518,7 +518,7 @@ se from epubcheck, ignoring: %s' % d)
         if valid_resp is None:
             # We got nothing useful from the validator (oops)
             pass
-        elif valid_resp is True:
+        elif valid_resp:
             message.append(_(u"<p>(epubcheck thinks this file is valid, so this may be a Bookworm error)</p>"))
         else:
             message.append(_(ubr/>'.join(epub_error_list)
