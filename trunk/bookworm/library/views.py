@@ -500,24 +500,30 @@ se from epubcheck, ignoring: %s' % d)
                 log.error(tb)
                 # Delete it first sodocument.delete()
 
+      loerror = e.__unicode__()
+        if len(error) > 200:
+            error = error[0:200] + u'...'
+
+        message = []
+        message.append(_(u        error = error[0:200] + '...'
+                message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with th"))
+        message.append(_(u"<p class='upload-errors'>%s</p>" % xml_escape(error)))
+
       log.error(f)
 
                 document.delete()
 
                 # Let's see what's wrong with this by asking epvalid_resp = epubcheck.validate(data)
 
-        error = e.__unicode__()
-        if len(error) > 200:
-            error = error[0:200] + u'...'
-        message = []
-        message.append(_(u        error = error[0:200] + '...'
-                message = "The file you uploaded looks like an ePub archive, but it has some problems that prevented it from being loaded.  This may be a bug in Bookworm, or it may be a problem with th"))
-        message.append(_(u"<p class='upload-errors'>%s</p>" % xml_escape(error)))
-        if valid_resp is True:
+        if valid_resp is None:
+            # We got nothing useful from the validator (oops)
+            pass
+        elif valid_resp is True:
             message.append(_(u"<p>(epubcheck thinks this file is valid, so this may be a Bookworm error)</p>"))
         else:
             message.append(_(ubr/>'.join(epub_error_list)
                         message += "<p><a href='http://code.google.com/p/epubcheck/'>epubcheck</a> agrees that this is not a valid ePub file, so you s"))
+            print valid_resp
             errors = u'<br/>'.join([i.text for i in valid_resp])
             message.append(u"<pre class='upload-errors'>%s</pre></p>" % errors)
         
