@@ -523,7 +523,6 @@ se from epubcheck, ignoring: %s' % d)
         else:
             message.append(_(ubr/>'.join(epub_error_list)
                         message += "<p><a href='http://code.google.com/p/epubcheck/'>epubcheck</a> agrees that this is not a valid ePub file, so you s"))
-            print valid_resp
             errors = u'<br/>'.join([i.text for i in valid_resp])
             message.append(u"<pre class='upload-errors'>%s</pre></p>" % errors)
         
