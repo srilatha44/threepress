@@ -457,9 +457,12 @@ se from epubcheck, ignoring: %s' % d)
     else:
         form = EpubValidateForm()        
 
-    return dadd_data_to_document(request, document, data, form):
+    return dadd_data_to_document(request, document, data, form, redirect_success_to_page=True):
     '''Add epub data (as a file-like object) to a document, then explode it.
-       If this returns True, return a successful redirect; otherwise return an error template.'''
+       If this returns True, return a successful redirect; otherwise return an error template.
+       If the redirect_to_page parameter is True (default), the code will redirect
+
+       '''
     successful_redirect = reverse('library')
 
     document.set_content(data)
@@ -526,7 +529,10 @@ se from epubcheck, ignoring: %s' % d)
                 
                 return direct_to_template(request, 'upload.html', {'form':for'message':u''.join(message)})                
 
-    return HttpResponseRedirect(successful_redirect)
+    if redirect_success_to_page:
+        return HttpResponseRedirect(successful_redirect)
+    return document
+
 
 @login_required
 @never_cache
@@ -535,8 +541,12 @@ def add_by_url(request):
     to the current logged-in user's library'''
     if not 'epub' in request.GET:
         raise Http404
-    form = EpubValidateForm()
     epub_url = request.GET['epub']
+    return add_by_url_field(request, epub_url, redirect_success_to_page=True)
+
+def add_by_url_field(request, epub_url, redirect_success_to_page):
+    form = EpubValidateForm()
+
     try:
         data = urllib2.urlopen(epub_url).read()
         data = StringIO(data)
@@ -548,7 +558,7 @@ se from epubcheck, ignoring: %s' % d)
         
     document = EpubArchive.objects.create(name=os.path.basename(urlparse.urlparse(epub_url).path))
     document.save()
-    return _add_data_to_document(request, document, data, form)
+    return _add_data_to_document(request, document, data, form, redirect_success_to_page)
     eturn dchapter_next_previous(document, chapter, dir='next'):
     '''Returns the next or previous data object from the OPF'''
     toc = document.get_toc()
