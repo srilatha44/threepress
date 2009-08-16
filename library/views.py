@@ -241,6 +241,7 @@ def download_epub(request, title, key, nonce=None):
 def _return_epub(document):
     '''Return the epub archive content.  If it's accidentally been deleted
     off the storage mechanism (usually this happens in developmif document is None:
+        raise Http404        elopmif document.get_content() is None: # This occurs if the file has been deleted unexpected from the filesystem
         raise Http404        elopment), return
     a 404 instead o.read of a zero-byte download.'''
     content = document.get_content()
