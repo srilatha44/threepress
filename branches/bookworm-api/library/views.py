@@ -445,7 +445,7 @@ urn direct_to_template(request, 'upload.html', {'form':form,
                     log.error("Key %s did not exist; creating new document" % (key))
                     document = EpubArchive(name=document_name)                    
                     document.save()
-      documenreturn _add_data_to_document(request, document, open(temp_file), form)
+      documenreturn add_data_to_document(request, document, open(temp_file), form)
 
         # The form isn't valid (generally because we didn't actually upload anything)
 se from epubcheck, ignoring: %s' % d)
@@ -457,7 +457,7 @@ se from epubcheck, ignoring: %s' % d)
     else:
         form = EpubValidateForm()        
 
-    return dadd_data_to_document(request, document, data, form, redirect_success_to_page=True):
+    return add_data_to_document(request, document, data, form, redirect_success_to_page=True):
     '''Add epub data (as a file-like object) to a document, then explode it.
        If this returns True, return a successful redirect; otherwise return an error template.
        If the redirect_to_page parameter is True (default), the code will redirect
@@ -558,7 +558,7 @@ se from epubcheck, ignoring: %s' % d)
         
     document = EpubArchive.objects.create(name=os.path.basename(urlparse.urlparse(epub_url).path))
     document.save()
-    return _add_data_to_document(request, document, data, form, redirect_success_to_page)
+    return add_data_to_document(request, document, data, form, redirect_success_to_page)
     eturn dchapter_next_previous(document, chapter, dir='next'):
     '''Returns the next or previous data object from the OPF'''
     toc = document.get_toc()
