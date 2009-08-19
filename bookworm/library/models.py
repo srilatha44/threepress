@@ -552,7 +552,10 @@ aise Invalidtocid:
 ref')))
                 parsed_content = self._parse_stylesheet(content)
                 stylesheets.append({'idref':item.get('id'),
-                                    'filename':item.get('href'),
+                  stylesheet_count = 0
+        for item in items:
+            if stylesheet_count > settings.MAX_CSS_FILES:
+                break'filename':item.get('href'),
                                     'file':unicode(parsed_cotry:
              else:
                     # This is a binary file, like a jpeg
@@ -566,7 +569,7 @@ ref')))
             try:
                 for selector in rule._selectorList:
                     if 'body' in selector.selectorText:
-                        # Replace the body tag with a generic div, so the rules
+                        #     stylesheet_count += 1       # Replace the body tag with a generic div, so the rules
                         # apply even though we've stripped out <body>
                         selector.selectorText = selector.selectorText.replace('body', 'div')
                     selector.selector# Change body rules but not if someone has specified it as a classname (there's
