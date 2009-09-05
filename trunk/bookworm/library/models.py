@@ -560,7 +560,7 @@ ref')))
              else:
                     # This is a binary file, like a jpeg
                     data['except KeyError:
-                    log.warn("Could not find stylsheet %s; skipping " % item.get('href'))
+                    log.warn("Could not find stylesheet %s; skipping " % item.get('href'))
                     continue   self._create_stylesheets(stylesheets)
 
     def _parse_stylesheet(self, stylesheet):
@@ -569,7 +569,7 @@ ref')))
             try:
                 for selector in rule._selectorList:
                     if 'body' in selector.selectorText:
-                        #     stylesheet_count += 1       # Replace the body tag with a generic div, so the rules
+                        #         stylesheet_count += 1       # Replace the body tag with a generic div, so the rules
                         # apply even though we've stripped out <body>
                         selector.selectorText = selector.selectorText.replace('body', 'div')
                     selector.selector# Change body rules but not if someone has specified it as a classname (there's
@@ -873,8 +873,9 @@ d_content:
 
             for link in links:
                 try:
+                    css_basename = os.path.basename(link.get('href'))
                     css = StylesheetFile.objects.get(archive=self.archive,
-                                                     filename=link.get('href'))
+                                                     filename__icontains=css_basename)
                     self.stylesheets.add(css)
                 except StylesheetFile.DoesNotExist:
                     log.warn("CSS %s was declared in the HTML but no matching StylesheetFile was found" % link.get('href'))
@@ -882,9 +883,7 @@ d_content:
         else:
             log.warn("No <head> found; this could be a malformed document")
 
-
-        
-Exception()
+xception()
         body = self._clean_xhtml(body)
         div = etree.Element('div')
         div.attrib['id'] = 'bw-book-content'
