@@ -45,7 +45,7 @@ def get_file_by_item(item, document) :
         css = StylesheetFile.objects.filter(idref=item.id, archive=document)
         if css is not None and len(css) > 0:
             return css[0]
-    if 'image' in item.media_type:
+    if 'image' or 'video' in item.media_type:
         image = ImageFile.objects.filter(idref=item.id, archive=document)
         if image is not None and len(image) > 0:
             return image[0]
@@ -495,11 +495,11 @@ aise Invalidtocid:
     [0]            
                 content = archive.read("%s%s" % (content_path, item.get('href')))
                 data = {}
-                data['data'] = None
-                data['file'] = None
+                dat may also be a video type, though hopefully the content creator included the required fallback.
+        If they are                data['file'] = None
  
                 if item.get('media-type') == constants.SVG_MIMETYPE:
-                    data['file'] = unicode(conte
+                    data['file'] = unicode(con or 'video data['file'] = unicode(conte
                 href = unquote_plus(item.get('href'))
                 ent, ENC)
 
@@ -522,7 +522,7 @@ aise Invalidtocid:
                    for i in images:
             f = i['file']
             if f == None:
-                f                f = ''
+                f = ''
             image = self._image_class()(
                 idref=i['idref'],
                 file=f,

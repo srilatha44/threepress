@@ -503,6 +503,11 @@ se from epubcheck, ignoring: %s' % d)
     except Exception, e:
         # We got some unknown error (usually a malformed epub).  We
         # want to know about these since they are sometimes actually Bookworm bugs.
+
+        if settings.SKIP_EPUBCHECK:
+    se from epubcheck, ignoring: %s' % d)
+                
+                return direct_to_template(request, 'upload.html', {'form':for    'message':str(e)})                
         _email_errors_to_admin(e, data, document)
 
   traceback.format_exc()
