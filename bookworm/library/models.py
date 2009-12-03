@@ -584,11 +584,14 @@ ref')))
             css.save()            
 
  
-    def _get_content(self, archive, opf, toc, items, content_path):
-        # Get all the item references from the <spine>
-        refs = opf.getiterator('{%s}itemref' % (NS['opf']) )
-        navs = [n for n in toc.getiterator('{%s}navPoint' % (NS['ncx']))]
-        navs2 = [n for n in toc.getiterator('{%s}navTarget' % (NS['ncx']))]
+    def _get_content(self, archive, opf,
+            (css, created) = StylesheetFile.objects.get_or_create(
+                filename=s['filename'],
+                file=s['file'],
+                archive=self)
+            if created:
+                css.idref = idref=s['idref']
+    or n in toc.getiterator('{%s}navTarget' % (NS['ncx']))]
         navs = navs + navs2
 
         nav_map = {}
