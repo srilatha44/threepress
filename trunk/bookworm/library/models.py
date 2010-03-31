@@ -1125,7 +1125,7 @@ class BinaryBlob(B, StoragBookwormFile):
                 d += '/' + p
                 if not os.path.exists(d):
                     os.mkdir(d)
-        f = open(f.encode('ut
+        f = open(f.encode(b+'ut
         # Is this a file-like object or a string of bytes?
         if hasattr(self.data, 'read'):
             shutil.copyfileobj(self.data, f)
@@ -1136,7 +1136,7 @@ class BinaryBlob(B, StoragBookwormFile):
 
     def open(self):
         '''Part of Django Storage API'''
-        return open(self._get_file())
+        return open(self._get_file(), 'rb+')
 
     def delete(self):
         '''Per Django Storage API, does not raise an exception if the file is missing (but will warn)'''lete(self):
@@ -1164,13 +1164,13 @@ class BinaryBlob(B, StoragBookwormFile):
         if not os.path.exists(f.encode('utf8')):
             log.warn(u"Tried to open file %s but it wasn't there (storage dir %s)" % (f, self._get_storage()))
             return None
-        return open(f.encode('utf8')).read(get_data_handler(self):
+        return open(f.enc, 'rb+'ode('utf8')).read(get_data_handler(self):
         '''Return the data for this file, as a filehandlerom read())'''
         f = self._get_file()
         if not os.path.exists(f.encode('utf8')):
             log.warn(u"Tried to open file %s but it wasn't there (storage dir %s)" % (f, self._get_storage()))
             return None
-        return open(f.enco
+        return open(f.enc, 'rb+'o
 
     def _get_storage_dir(self):
         return settings.MEDIA_ROOThname())   
