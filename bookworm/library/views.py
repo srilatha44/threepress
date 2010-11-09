@@ -484,8 +484,6 @@ se from epubcheck, ignoring: %s' % d)
                                      owner=True,
                                      user=request.user)
         document.save()
-    except Exception, e:
-        log.error(e)
 
     except BadZipfile, e:
         # The user tried to upload something that wasn't a zip
